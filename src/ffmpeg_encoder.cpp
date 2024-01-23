@@ -373,24 +373,27 @@ int FFMPEGEncoder::drainPacket(const Header & header, int width, int height)
   }
   const AVPacket & pk = *packet_;
   if (ret == 0 && pk.size > 0) {
-    FFMPEGPacket * packet = new FFMPEGPacket;
-    FFMPEGPacketConstPtr pptr(packet);
+    CompressedVideo * packet = new CompressedVideo;
+    CompressedVideoConstPtr pptr(packet);
     packet->data.resize(pk.size);
-    packet->width = width;
-    packet->height = height;
-    packet->pts = pk.pts;
-    packet->flags = pk.flags;
+    // packet->width = width;
+    // packet->height = height;
+    // packet->pts = pk.pts;
+    // packet->flags = pk.flags;
+    packet->format = "h264";
     memcpy(&(packet->data[0]), pk.data, pk.size);
     if (measurePerformance_) {
       t2 = rclcpp::Clock().now();
       totalOutBytes_ += pk.size;
       tdiffCopyOut_.update((t2 - t1).seconds());
     }
-    packet->header = header;
+    // packet->header = header;
+    packet->frame_id = header.frame_id;
     auto it = ptsToStamp_.find(pk.pts);
     if (it != ptsToStamp_.end()) {
-      packet->header.stamp = it->second;
-      packet->encoding = codecName_;
+      // packet->header.stamp = it->second;
+      // packet->encoding = codecName_;
+      packet->timestamp = it->second;
       callback_(pptr);  // deliver packet callback
       if (measurePerformance_) {
         const auto t3 = rclcpp::Clock().now();

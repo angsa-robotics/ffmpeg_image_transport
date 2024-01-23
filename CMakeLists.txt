@@ -35,6 +35,7 @@ find_package(rcutils REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(ffmpeg_image_transport_msgs REQUIRED)
+find_package(foxglove_msgs REQUIRED)
 
 find_package(OpenCV REQUIRED imgproc)
 
@@ -76,7 +77,8 @@ ament_target_dependencies(${LIBRARY_NAME}
   pluginlib
   rclcpp
   sensor_msgs
-  ffmpeg_image_transport_msgs)
+  ffmpeg_image_transport_msgs
+  foxglove_msgs)
 
 target_link_libraries(${LIBRARY_NAME} opencv_imgproc PkgConfig::LIBAV)
 
@@ -85,7 +87,7 @@ add_executable(test_encoder
 
 target_link_libraries(test_encoder ${LIBRARY_NAME})
 target_include_directories(test_encoder PRIVATE include)
-ament_target_dependencies(test_encoder cv_bridge rclcpp sensor_msgs ffmpeg_image_transport_msgs)
+ament_target_dependencies(test_encoder cv_bridge rclcpp sensor_msgs ffmpeg_image_transport_msgs foxglove_msgs)
 
 
 ament_export_dependencies(
@@ -97,7 +99,8 @@ ament_export_dependencies(
   rcutils
   sensor_msgs
   std_msgs
-  ffmpeg_image_transport_msgs)
+  ffmpeg_image_transport_msgs
+  foxglove_msgs)
 
 install(TARGETS ${LIBRARY_NAME} EXPORT export_${LIBRARY_NAME}
   ARCHIVE DESTINATION lib

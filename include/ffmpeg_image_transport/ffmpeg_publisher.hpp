@@ -24,7 +24,7 @@
 
 namespace ffmpeg_image_transport
 {
-using FFMPEGPublisherPlugin = image_transport::SimplePublisherPlugin<FFMPEGPacket>;
+using FFMPEGPublisherPlugin = image_transport::SimplePublisherPlugin<CompressedVideo>;
 
 class FFMPEGPublisher : public FFMPEGPublisherPlugin
 {
@@ -45,7 +45,7 @@ protected:
   void publish(const Image & message, const PublishFn & publish_fn) const override;
 
 private:
-  void packetReady(const FFMPEGPacketConstPtr & pkt);
+  void packetReady(const CompressedVideoConstPtr & pkt);
   rmw_qos_profile_t initialize(rclcpp::Node * node, rmw_qos_profile_t custom_qos);
   // variables ---------
   rclcpp::Logger logger_;
