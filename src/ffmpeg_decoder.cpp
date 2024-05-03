@@ -59,16 +59,16 @@ void FFMPEGDecoder::reset()
 }
 
 bool FFMPEGDecoder::initialize(
-  const FFMPEGPacketConstPtr & msg, Callback callback, const std::string & dec)
+  const CompressedVideoConstPtr & msg, Callback callback, const std::string & dec)
 {
   std::string decoder = dec;
   if (decoder.empty()) {
-    RCLCPP_INFO_STREAM(logger_, "no decoder for encoding: " << msg->encoding);
+    RCLCPP_INFO_STREAM(logger_, "no decoder for encoding: " << msg->format);
     return (false);
   }
   callback_ = callback;
-  encoding_ = msg->encoding;
-  return (initDecoder(msg->width, msg->height, encoding_, decoder));
+  encoding_ = msg->format;
+  return (initDecoder(0, 0, encoding_, decoder));
 }
 
 static enum AVHWDeviceType get_hw_type(const std::string & name, rclcpp::Logger logger)
@@ -133,6 +133,8 @@ static enum AVPixelFormat find_pix_format(
 bool FFMPEGDecoder::initDecoder(
   int width, int height, const std::string & encoding, const std::string & decoder)
 {
+  width;
+  height;
   try {
     const AVCodec * codec = NULL;
     codec = avcodec_find_decoder_by_name(decoder.c_str());
@@ -163,8 +165,8 @@ bool FFMPEGDecoder::initDecoder(
         hwDevType = AV_HWDEVICE_TYPE_NONE;
       }
     }
-    codecContext_->width = width;
-    codecContext_->height = height;
+    // codecContext_->width = width;
+    // codecContext_->height = height;
     codecContext_->pkt_timebase = timeBase_;
 
     if (avcodec_open2(codecContext_, codec, NULL) < 0) {
@@ -177,8 +179,8 @@ bool FFMPEGDecoder::initDecoder(
     decodedFrame_ = av_frame_alloc();
     cpuFrame_ = (hwPixFormat_ == AV_PIX_FMT_NONE) ? NULL : av_frame_alloc();
     colorFrame_ = av_frame_alloc();
-    colorFrame_->width = width;
-    colorFrame_->height = height;
+    // colorFrame_->width = width;
+    // colorFrame_->height = height;
     colorFrame_->format = AV_PIX_FMT_BGR24;
   } catch (const std::runtime_error & e) {
     RCLCPP_ERROR_STREAM(logger_, e.what());
@@ -189,27 +191,27 @@ bool FFMPEGDecoder::initDecoder(
   return (true);
 }
 
-bool FFMPEGDecoder::decodePacket(const FFMPEGPacketConstPtr & msg)
+bool FFMPEGDecoder::decodePacket(const CompressedVideoConstPtr & msg)
 {
   rclcpp::Time t0;
   if (measurePerformance_) {
     t0 = rclcpp::Clock().now();
   }
-  if (msg->encoding != encoding_) {
+  if (msg->format != encoding_) {
     RCLCPP_ERROR_STREAM(
-      logger_, "no on-the fly encoding change from " << encoding_ << " to " << msg->encoding);
+      logger_, "no on-the fly encoding change from " << encoding_ << " to " << msg->format);
     return (false);
   }
   AVCodecContext * ctx = codecContext_;
   AVPacket * packet = av_packet_alloc();
   av_new_packet(packet, msg->data.size());  // will add some padding!
   memcpy(packet->data, &msg->data[0], msg->data.size());
-  packet->pts = msg->pts;
-  packet->dts = packet->pts;
-  ptsToStamp_[packet->pts] = msg->header.stamp;
+  // packet->pts = msg->pts;
+  // packet->dts = packet->pts;
+  ptsToStamp_[0] = msg->timestamp;
   int ret = avcodec_send_packet(ctx, packet);
   if (ret != 0) {
-    RCLCPP_WARN_STREAM(logger_, "send_packet failed for pts: " << msg->pts);
+    RCLCPP_WARN_STREAM(logger_, "send_packet failed for pts: ");
     av_packet_unref(packet);
     return (false);
   }
@@ -256,7 +258,7 @@ bool FFMPEGDecoder::decodePacket(const FFMPEGPacketConstPtr & msg)
     if (it == ptsToStamp_.end()) {
       RCLCPP_ERROR_STREAM(logger_, "cannot find pts that matches " << decodedFrame_->pts);
     } else {
-      image->header = msg->header;
+      image->header.frame_id = msg->frame_id;
       image->header.stamp = it->second;
       ptsToStamp_.erase(it);
       callback_(image, decodedFrame_->key_frame == 1);  // deliver callback

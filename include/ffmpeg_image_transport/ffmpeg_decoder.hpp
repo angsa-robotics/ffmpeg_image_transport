@@ -50,13 +50,13 @@ public:
   // providing callback to be called when frame is complete.
   // You must still call decodePacket(msg) afterward!
   bool initialize(
-    const FFMPEGPacketConstPtr & msg, Callback callback,
+    const CompressedVideoConstPtr & msg, Callback callback,
     const std::string & encoding = std::string());
 
   // clears all state, but leaves config intact
   void reset();
   // decode packet (may result in frame callback!)
-  bool decodePacket(const FFMPEGPacketConstPtr & msg);
+  bool decodePacket(const CompressedVideoConstPtr & msg);
   void setMeasurePerformance(bool p) { measurePerformance_ = p; }
   void printTimers(const std::string & prefix) const;
   void resetTimers();

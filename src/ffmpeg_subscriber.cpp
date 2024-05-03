@@ -46,6 +46,7 @@ void FFMPEGSubscriber::subscribeImpl(
   rmw_qos_profile_t custom_qos, rclcpp::SubscriptionOptions opt)
 {
   initialize(node);
+  custom_qos.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
 #ifdef IMAGE_TRANSPORT_API_V2
   (void)opt;  // to suppress compiler warning
   FFMPEGSubscriberPlugin::subscribeImpl(node, base_topic, callback, custom_qos);
@@ -71,20 +72,20 @@ void FFMPEGSubscriber::initialize(rclcpp::Node * node)
   decoder_.setMeasurePerformance(mp);
 }
 
-void FFMPEGSubscriber::internalCallback(const FFMPEGPacketConstPtr & msg, const Callback & user_cb)
+void FFMPEGSubscriber::internalCallback(const CompressedVideoConstPtr & msg, const Callback & user_cb)
 {
   if (!decoder_.isInitialized()) {
-    if (msg->flags == 0) {
-      return;  // wait for key frame!
-    }
-    if (msg->encoding.empty()) {
+    // if (msg->flags == 0) {
+    //   return;  // wait for key frame!
+    // }
+    if (msg->format.empty()) {
       RCLCPP_ERROR_STREAM(logger_, "no encoding provided!");
       return;
     }
     userCallback_ = &user_cb;
-    const std::string decoder = get_safe_param<std::string>(node_, nsc + msg->encoding, "");
+    const std::string decoder = get_safe_param<std::string>(node_, nsc + msg->format, "");
     if (decoder.empty()) {
-      RCLCPP_ERROR_STREAM(logger_, "no valid decoder found for encoding: " << msg->encoding);
+      RCLCPP_ERROR_STREAM(logger_, "no valid decoder found for encoding: " << msg->format);
       return;
     }
     if (!decoder_.initialize(
