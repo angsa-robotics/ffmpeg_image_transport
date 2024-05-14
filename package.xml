@@ -28,6 +28,7 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>ffmpeg_image_transport_msgs</depend>
+  <depend>foxglove_msgs</depend>
   <depend>ffmpeg</depend>
   <depend>libavdevice-dev</depend>
 

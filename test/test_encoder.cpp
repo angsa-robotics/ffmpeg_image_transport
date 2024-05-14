@@ -16,12 +16,14 @@
 #include <unistd.h>
 
 #include <ffmpeg_image_transport/ffmpeg_encoder.hpp>
+#include <foxglove_msgs/msg/compressed_video.hpp>
+
 #include <opencv2/imgcodecs/imgcodecs.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-void packetReady(const ffmpeg_image_transport::FFMPEGPacketConstPtr & pkt)
+void packetReady(const ffmpeg_image_transport::CompressedVideoConstPtr & pkt)
 {
-  std::cout << " header stamp: " << rclcpp::Time(pkt->header.stamp).seconds() << std::endl;
+  std::cout << " header stamp: " << rclcpp::Time(pkt->timestamp).seconds() << std::endl;
   std::cout << " got packet of size: " << pkt->data.size() << std::endl;
 }
 

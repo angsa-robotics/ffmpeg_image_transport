@@ -44,7 +44,7 @@ class FFMPEGEncoder
 {
 public:
   using Lock = std::unique_lock<std::recursive_mutex>;
-  using Callback = std::function<void(const FFMPEGPacketConstPtr & pkt)>;
+  using Callback = std::function<void(const CompressedVideoConstPtr & pkt)>;
 
   FFMPEGEncoder();
   ~FFMPEGEncoder();
@@ -132,7 +132,7 @@ private:
   // --------- variables
   rclcpp::Logger logger_;
   mutable std::recursive_mutex mutex_;
-  std::function<void(const FFMPEGPacketConstPtr & pkt)> callback_;
+  std::function<void(const CompressedVideoConstPtr & pkt)> callback_;
   // config
   std::string codecName_;  // e.g. "libx264"
   std::string preset_;     // e.g. "slow", "medium", "lossless"

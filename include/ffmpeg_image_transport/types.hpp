@@ -17,6 +17,7 @@
 #define FFMPEG_IMAGE_TRANSPORT__TYPES_HPP_
 
 #include <ffmpeg_image_transport_msgs/msg/ffmpeg_packet.hpp>
+#include <foxglove_msgs/msg/compressed_video.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/header.hpp>
 
@@ -28,6 +29,8 @@ using ImagePtr = Image::SharedPtr;
 using ImageConstPtr = Image::ConstSharedPtr;
 using FFMPEGPacket = ffmpeg_image_transport_msgs::msg::FFMPEGPacket;
 using FFMPEGPacketConstPtr = FFMPEGPacket::ConstSharedPtr;
+using CompressedVideo = foxglove_msgs::msg::CompressedVideo;
+using CompressedVideoConstPtr = CompressedVideo::ConstSharedPtr;
 }  // namespace ffmpeg_image_transport
 
 #endif  // FFMPEG_IMAGE_TRANSPORT__TYPES_HPP_
