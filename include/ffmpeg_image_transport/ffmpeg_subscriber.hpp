@@ -24,7 +24,7 @@
 
 namespace ffmpeg_image_transport
 {
-using FFMPEGSubscriberPlugin = image_transport::SimpleSubscriberPlugin<CompressedVideo>;
+using FFMPEGSubscriberPlugin = image_transport::SimpleSubscriberPlugin<FFMPEGPacket>;
 
 class FFMPEGSubscriber : public FFMPEGSubscriberPlugin
 {
@@ -35,7 +35,7 @@ public:
   std::string getTransportName() const override { return "ffmpeg"; }
 
 protected:
-  void internalCallback(const CompressedVideoConstPtr & msg, const Callback & user_cb) override;
+  void internalCallback(const FFMPEGPacketConstPtr & msg, const Callback & user_cb) override;
 
 #ifdef IMAGE_TRANSPORT_API_V1
   void subscribeImpl(

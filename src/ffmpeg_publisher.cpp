@@ -54,7 +54,6 @@ rmw_qos_profile_t FFMPEGPublisher::initialize(rclcpp::Node * node, rmw_qos_profi
 
   // bump queue size to 2 * distance between keyframes
   custom_qos.depth = std::max(static_cast<int>(custom_qos.depth), 2 * encoder_.getGOPSize());
-  custom_qos.reliability = RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT;
   return (custom_qos);
 }
 
