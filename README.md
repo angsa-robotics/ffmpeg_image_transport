@@ -1,3 +1,7 @@
+This fork modifies the upstream publisher to publish [foxglove_msgs/msg/CompressedVideo](https://github.com/foxglove/schemas/blob/main/schemas/ros2/CompressedVideo.msg) instead of FFMPEGPacketConstPtr in order to comply with foxglove (see [here](https://foxglove.dev/blog/announcing-h264-support-in-foxglove#experiment-with-ros-image-transport)) 
+
+
+
 # ROS2 image transport for FFmpeg encoding
 
 The ROS2 image transport supports encoding/decoding with the FFMpeg
